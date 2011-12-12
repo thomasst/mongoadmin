@@ -1,0 +1,27 @@
+{% extends "mongoadmin/base.html" %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+    {# <li><a href="../../../../../">MongoAdmin</a> <span class="divider">/</span></li> #}
+    <li><a href="../../../../">{{ connection }}</a> <span class="divider">/</span></li>
+    <li><a href="../../../">{{ database }}</a> <span class="divider">/</span></li>
+    <li><a href="../../">{{ collection }}</a> <span class="divider">/</span></li>
+    <li><a href="../">{{ document_id }}</a> <span class="divider">/</span></li>
+    <li>Delete</li>
+</ul>
+{% endblock %}
+
+{% block content %}
+
+<h2>Delete document "{{ document_id }}"</h2>
+
+<p>Are you sure?</p>
+
+<form action="" method="post">{% csrf_token %}
+    <div class="well">
+        <input type="submit" class="btn danger" value="Yes, I'm sure">
+        <a class="btn" href="../">Cancel</a>
+    </div>
+</form>
+{% endblock %}
+
