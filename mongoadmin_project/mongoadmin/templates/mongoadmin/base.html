@@ -42,7 +42,8 @@ $.extend({
 $.fn.JSONEditor = function(options) {
     var defaults = {
         depth: 4,
-        idPrefix: 'json'
+        idPrefix: 'json',
+        indent: 4
     };
     var options = $.extend(defaults, options);
 
@@ -51,20 +52,25 @@ $.fn.JSONEditor = function(options) {
         var textarea = $(this);
 
 
-        var parent = $('<div>').attr('id', options.idPrefix).insertAfter(textarea);
+        var parent = $('#'+options.idPrefix);
+        if (!parent.length) {
+            parent = $('<div>').attr('id', options.idPrefix).insertAfter(textarea);
+        }
         var rootObj = null;
         var focus = null;
 
         function renderRoot() {
             $(parent).html('');
             textarea.removeClass('error');
-            render(parent, rootObj, options.depth-1, options.idPrefix);
+            if (rootObj != null) {
+                render(parent, rootObj, options.depth-1, options.idPrefix);
+            }
         }
 
         function render(el, obj, depth, idPrefix) {
 
             if (el == parent) {
-                textarea.val(JSON.stringify(rootObj, null, 4));
+                textarea.val(JSON.stringify(rootObj, null, options.indent));
             }
 
             if (obj.constructor == Array || obj.constructor == Object) {
@@ -86,7 +92,7 @@ $.fn.JSONEditor = function(options) {
                             
                         var child = (i == keys.length) ? undefined : obj[key];
                         var div = $('<div class="input-prepend">').attr('id', id);
-                        var valueEl = $('<input class="medium value" size="40" type="text">').val(JSON.stringify(child)).attr('id', id+'_value');
+                        var valueEl = $('<input class="xxlarge value" type="text">').val(JSON.stringify(child)).attr('id', id+'_value');
                         var prevKey;
                         var prevValue;
 
@@ -217,11 +223,8 @@ console.log(parts);
             renderRoot();
         }
 
-        // obj.hide();
         textarea.change(function() {
             loadRoot();
-            // TODO: catch invalid JSON and highlight position of parser error
-            // console.log('change', $.parseJSON(obj.val()));
         });
     });
 }

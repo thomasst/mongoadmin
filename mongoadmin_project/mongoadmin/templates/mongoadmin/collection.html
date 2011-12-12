@@ -15,10 +15,25 @@
 
 <h2>Collection "{{ collection }}"</h2>
 
+<form>
+<div class="clearfix">
+    {{ form.query.label_tag }}
+    <div class="input">
+        {{ form.query }}
+        <input type="submit" value="Filter" class="btn">
+        {% if query %}
+            <a href="?" class="btn">Clear filter</a>
+        {% endif %}
+        <span class="help-block">E.g. {"field": "value"}</span>
+        <div id="json"></div>
+    </div>
+</div>
+</form>
+
 <table>
     <thead>
         <tr>
-            <th>Document ID</th>
+            <th style="width:170px;">Document ID</th>
             <th>Contents</th>
         </tr>
     </thead>
@@ -32,4 +47,64 @@
     {% endfor %}
     </tbody>
 </table>
+
+
+
+{% if is_paginated %}
+  {% load i18n %}
+  <div class="pagination">
+    <ul>
+      {% block previouslink %}
+        {% if page_obj.has_previous %}
+          <li class="prev"><a href="?page={{ page_obj.previous_page_number }}{{ getvars }}">{{ previous_link_decorator|safe }}&larr; {% trans "Previous" %}</a></li>
+        {% else %}
+          {% if display_disabled_previous_link %}
+            <li class="prev disabled"><a>{{ previous_link_decorator|safe }}{% trans "Previous" %}</a></li>
+          {% endif %}
+        {% endif %}
+      {% endblock previouslink %}
+      {% block pagelinks %}
+        {% if display_page_links %}
+          {% for page in paginator.page_range %}
+            {% if page %}
+              {% ifequal page page_obj.number %}
+                <li class="active"><a href="#">{{ page }}</a></li>
+              {% else %}
+                <li><a href="?page={{ page }}{{ getvars }}">{{ page }}</a></li>
+              {% endifequal %}
+            {% else %}
+              ...
+            {% endif %}
+          {% endfor %} 
+        {% else %}
+            {% if page_obj.number > 1 %}
+                <li class="disabled"><a href="#">…</a></li>
+            {% endif %}
+            <li class="active"><a href="#">{{ page_obj.number }}</a></li>
+            {% if page_obj.number < paginator.num_pages %}
+                <li class="disabled"><a href="#">…</a></li>
+            {% endif %}
+        {% endif %}
+      {% endblock pagelinks %}
+      {% block nextlink %}
+        {% if page_obj.has_next %}
+          <li class="next"><a href="?page={{ page_obj.next_page_number }}{{ getvars }}">{% trans "Next" %}{{ next_link_decorator|safe }} &rarr;</a></li>
+        {% else %}
+          {% if display_disabled_next_link %}
+            <li class="next disabled"><a>{% trans "Next" %}{{ next_link_decorator|safe }}</a></li>
+          {% endif %}
+        {% endif %}
+      {% endblock nextlink %}
+    </ul>
+  </div>
+{% endif %}
+
+<p>{{ paginator.count }} result{{ paginator.count|pluralize }}.</p>
+
+<script type="text/javascript">
+$(function() {
+    $('#id_query').JSONEditor({indent:null});
+});
+</script>
+
 {% endblock %}

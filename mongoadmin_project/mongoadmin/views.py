@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
@@ -8,7 +9,9 @@ from django.shortcuts import get_object_or_404
 from pymongo.objectid import ObjectId
 from pymongo import json_util
 
+import cgi
 import json
+import urllib
 
 from ..common.utils import ellipsize
 from . import models, forms
@@ -62,13 +65,42 @@ class DatabaseView(ConnectionDetailMixin, TemplateView):
 
 class CollectionView(ConnectionDetailMixin, TemplateView):
     template_name = 'mongoadmin/collection.html'
+    per_page = 50
 
     def get_context_data(self, **kwargs):
         context = super(CollectionView, self).get_context_data(**kwargs)
 
+        form = forms.CollectionFilterForm(self.request.GET)
+        if form.is_valid():
+            page_number = form.cleaned_data['page']
+            query = form.cleaned_data['query']
+        else:
+            page_number = 1
+            query = None
+        if not page_number:
+            page_number = 1
+
+
         self.setup_connection()
 
-        documents = self.collection.find()
+        if query:
+            all_documents = self.collection.find(query)
+        else:
+            all_documents = self.collection.find()
+
+        paginator = Paginator(all_documents, self.per_page)
+        page_obj = paginator.page(page_number)
+
+        documents = page_obj.object_list
+
+        params = dict(cgi.parse_qsl(self.request.META.get('QUERY_STRING')))
+        if 'page' in params:
+            del params['page']
+
+        getvars = urllib.urlencode(params)
+        if getvars:
+            getvars = '&%s' % getvars
+
 
         def prepare_document(document):
             del document['_id']
@@ -81,6 +113,13 @@ class CollectionView(ConnectionDetailMixin, TemplateView):
             'database': self.kwargs['database_name'],
             'collection': self.kwargs['collection_name'],
             'documents': documents_list,
+            'paginator': paginator,
+            'page_obj': page_obj,
+            'is_paginated': paginator.num_pages > 1,
+            'display_page_links': paginator.num_pages < 20,
+            'getvars': getvars,
+            'form': form,
+            'query': query,
         })
         return context
 
@@ -119,6 +158,7 @@ class UpdateDocumentView(BaseDocumentView, FormView):
         obj = form.cleaned_data['json']
         id = form.cleaned_data['id']
         if id and '_id' not in obj:
+            # Reinsert id into document when editing an existing document.
             obj['_id'] = ObjectId(id)
         id = self.collection.save(obj)
         messages.success(self.request, 'The document %s was saved successfully.' % id)
