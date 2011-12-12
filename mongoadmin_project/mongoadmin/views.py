@@ -103,10 +103,11 @@ class CollectionView(ConnectionDetailMixin, TemplateView):
 
 
         def prepare_document(document):
-            del document['_id']
+            if '_id' in document:
+                del document['_id']
             return ellipsize(json.dumps(document, default=json_util.default), 120)
 
-        documents_list = [(document['_id'], prepare_document(document)) for document in documents]
+        documents_list = [(document.get('_id'), prepare_document(document)) for document in documents]
 
         context.update({
             'connection': self.connection,

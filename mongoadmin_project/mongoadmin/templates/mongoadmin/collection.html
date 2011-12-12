@@ -41,7 +41,7 @@
     <tbody>
     {% for document_id, document in documents %}
         <tr>
-            <td><a href="{{ document_id }}/">{{ document_id }}</a></td>
+            <td>{% if document_id %}<a href="{{ document_id }}/">{{ document_id }}</a>{% endif %}</td>
             <td>{{ document }}</td>
         </tr>
     {% endfor %}
@@ -99,7 +99,7 @@
   </div>
 {% endif %}
 
-<p>{{ paginator.count }} result{{ paginator.count|pluralize }}.</p>
+<p>Found {{ paginator.count }} document{{ paginator.count|pluralize }}.</p>
 
 <script type="text/javascript">
 $(function() {
