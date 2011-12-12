@@ -1,4 +1,8 @@
+import os
 # Django settings for mongoadmin_project project.
+
+BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), ''))
+LIB_PATH = os.path.abspath(os.path.join(BASE_PATH, '..'))
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -48,18 +52,18 @@ USE_TZ = True
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
 # Example: "/home/media/media.lawrence.com/media/"
-MEDIA_ROOT = ''
+MEDIA_ROOT = BASE_PATH+'/media'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
 # Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
-MEDIA_URL = ''
+MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
 # Don't put anything in this directory yourself; store your static files
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
-STATIC_ROOT = ''
+STATIC_ROOT = BASE_PATH+'/static'
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -81,6 +85,10 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
+COMPRESS_JS_FILTERS = [
+    'compressor.filters.yui.YUIJSFilter',
+]
+
 COMPRESS_CSS_FILTERS = [
     'compressor.filters.css_default.CssAbsoluteFilter',
     'compressor.filters.cssmin.CSSMinFilter'
@@ -89,6 +97,8 @@ COMPRESS_CSS_FILTERS = [
 COMPRESS_PRECOMPILERS = (
     ('text/less', 'lessc {infile} {outfile} --include-path=%s/common/static/less' % BASE_PATH),
 )
+
+COMPRESS_YUI_BINARY = 'java -jar %s/yuicompressor-2.4.7/build/yuicompressor-2.4.7.jar' % LIB_PATH
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = ''
@@ -119,7 +129,7 @@ TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
-    'templates',
+    BASE_PATH+'/templates',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
