@@ -1,0 +1,14 @@
+build
+compressor/tests/media/CACHE
+compressor/tests/media/custom
+compressor/tests/media/js/066cd253eada.js
+dist
+MANIFEST
+*.pyc
+*.egg-info
+.tox/
+*.egg
+docs/_build/
+.coverage
+htmlcov
+.sass-cache

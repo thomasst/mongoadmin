@@ -1,0 +1,5 @@
+include AUTHORS
+include README.rst
+include LICENSE
+recursive-include compressor/templates/compressor *.html
+recursive-include compressor/tests/media *.js *.css *.png
