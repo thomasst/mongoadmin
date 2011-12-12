@@ -1,0 +1,31 @@
+{% extends "mongoadmin/base.html" %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+    {# <li><a href="../../">MongoAdmin</a> <span class="divider">/</span></li> #}
+    <li><a href="../">{{ connection }}</a> <span class="divider">/</span></li>
+    <li>{{ database }}</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+{# <p><a href="new/" class="btn" style="float:right;">&#10010; Add collection</a></p> #}
+
+<h2>Database "{{ database }}"</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Collection name</th>
+        </tr>
+    </thead>
+
+    <tbody>
+    {% for collection in collections %}
+        <tr>
+            <td><a href="{{ collection }}/">{{ collection }}</a></td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

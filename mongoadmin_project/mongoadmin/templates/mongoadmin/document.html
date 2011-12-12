@@ -1,0 +1,57 @@
+{% extends "mongoadmin/base.html" %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+    {# <li><a href="../../../../">MongoAdmin</a> <span class="divider">/</span></li> #}
+    <li><a href="../../../">{{ connection }}</a> <span class="divider">/</span></li>
+    <li><a href="../../">{{ database }}</a> <span class="divider">/</span></li>
+    <li><a href="../">{{ collection }}</a> <span class="divider">/</span></li>
+    {% if document_id %}
+        <li>{{ document_id }}</li>
+    {% else %}
+        <li>Add new document</li>
+    {% endif %}
+</ul>
+{% endblock %}
+
+{% block content %}
+
+{% if document_id %}
+    <h2>Change document "{{ document_id }}"</h2>
+{% else %}
+    <h2>Add new document</h2>
+{% endif %}
+
+<form action="" method="post">{% csrf_token %}
+    <div class="clearfix">
+        {{ form.id }}
+        {% if form.json.errors %}
+            <div class="alert-message error">
+                <p>{{ form.json.errors.0 }}</p>
+            </div>
+        {% endif %}
+        {{ form.json }}
+    </div>
+
+    <div class="well">
+        <a href="delete/" class="btn danger">Delete</a>
+        <div style="float:right;">
+            {# first button gets submitted when return is pressed #}
+            <input style="float:right; margin-left:6px;" name="_save" type="submit" class="btn primary" value="Save">
+            <button name="_addanother" class="btn">Save and add another</button>
+            <button name="_continue" class="btn">Save and continue editing</button>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+$(function() {
+    $('textarea[name=json]').JSONEditor();
+    $('form').submit(function(ev) {
+        // trigger change() event before we submit
+        $('textarea[name=json]').focus();
+        $('textarea[name=json]').blur();
+    });
+});
+</script>
+{% endblock %}
