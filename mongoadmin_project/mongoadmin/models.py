@@ -14,8 +14,6 @@ class MongoConnection(models.Model):
     password = models.CharField(max_length=255, null=True, blank=True)
     # ssh
 
-    database = models.CharField(max_length=255)
-
 
     def __unicode__(self):
         return self.name

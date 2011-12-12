@@ -5,6 +5,9 @@ from django.contrib import admin
 admin.autodiscover()
 
 urlpatterns = patterns('',
+    url(r'^accounts/logout/', 'django.contrib.auth.views.logout',
+        {'next_page': '/'}, name='auth_logout'),
+
     # Examples:
     # url(r'^$', 'mongoadmin_project.views.home', name='home'),
      url(r'^', include('mongoadmin_project.mongoadmin.urls')),

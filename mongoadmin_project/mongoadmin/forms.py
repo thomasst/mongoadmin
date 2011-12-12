@@ -2,6 +2,14 @@ from django import forms
 import json
 from pymongo import json_util
 
+from . import models
+
+
+class ConnectForm(forms.ModelForm):
+    class Meta:
+        model = models.MongoConnection
+        fields = ['host', 'port', 'username', 'password']
+
 
 class CollectionFilterForm(forms.Form):
     page = forms.IntegerField(required=False)

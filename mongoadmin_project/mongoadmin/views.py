@@ -1,11 +1,12 @@
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect, Http404
-from django.views.generic import DetailView, TemplateView
+from django.views.generic import DetailView, TemplateView, CreateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin, ProcessFormView, FormView
 from django.shortcuts import get_object_or_404
 
+import pymongo
 from pymongo.objectid import ObjectId
 from pymongo import json_util
 
@@ -16,13 +17,57 @@ import urllib
 from ..common.utils import ellipsize
 from . import models, forms
 
+
+#class ErrorHandlerMixin(object):
+
+
+class ConnectView(CreateView):
+    form_class = forms.ConnectForm
+    template_name = 'mongoadmin/connect.html'
+    success_url = '/mongo/session/'
+
+    def form_valid(self, form):
+        # don't save the form. store connection in session.
+        connection = form.instance
+        connection.name = 'Connection'
+
+        try:
+            test_result = connection.get_connection().database_names()
+        except pymongo.errors.AutoReconnect, e:
+            messages.error(self.request, unicode(e))
+            return self.form_invalid(form)
+
+
+        self.request.session['mongoconnection'] = connection
+        return HttpResponseRedirect(self.success_url)
+
+
 class ConnectionDetailMixin(object):
     model = models.MongoConnection
 
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            return super(ConnectionDetailMixin, self).dispatch(request, *args, **kwargs)
+        except pymongo.errors.AutoReconnect, e:
+            messages.error(self.request, unicode(e))
+            return self.response_class(
+                request=self.request,
+                template='mongoadmin/error.html',
+                context={},
+             )
+
+            #return self.render_to_response(TemplateView.get_context_data(self, **kwargs))
+
     def setup_connection(self):
-        if not self.request.user.is_authenticated():
-            raise Http404
-        self.connection = get_object_or_404(models.MongoConnection, name=self.kwargs['connection_name'], user=self.request.user)
+        if self.kwargs['connection_name'] == 'session':
+            try:
+                self.connection = self.request.session['mongoconnection']
+            except KeyError:
+                raise Http404
+        else:
+            if not self.request.user.is_authenticated():
+                raise Http404
+            self.connection = get_object_or_404(models.MongoConnection, name=self.kwargs['connection_name'], user=self.request.user)
         if 'database_name' in self.kwargs:
             self.database = self.connection.get_connection()[self.kwargs['database_name']]
             if 'collection_name' in self.kwargs:
@@ -34,7 +79,11 @@ class ConnectionView(ConnectionDetailMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(ConnectionView, self).get_context_data(**kwargs)
         self.setup_connection()
-        databases = self.connection.get_connection().database_names()
+        try:
+            databases = self.connection.get_connection().database_names()
+        except pymongo.errors.AutoReconnect, e:
+            messages.error(self.request, unicode(e))
+            databases = []
         context.update({
             'connection': self.connection,
             'databases': databases,
@@ -48,7 +97,11 @@ class DatabaseView(ConnectionDetailMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(DatabaseView, self).get_context_data(**kwargs)
         self.setup_connection()
-        collections = self.database.collection_names()
+        try:
+            collections = self.database.collection_names()
+        except pymongo.errors.AutoReconnect, e:
+            messages.error(self.request, unicode(e))
+            collections = []
         context.update({
             'connection': self.connection,
             'database': self.kwargs['database_name'],

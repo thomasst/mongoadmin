@@ -239,7 +239,7 @@ console.log(parts);
         <div class="topbar" data-dropdown="dropdown">
           <div class="topbar-inner">
             <div class="container">
-              <h3><a href="#">MongoAdmin</a></h3>
+              <h3><a href="/">MongoAdmin</a></h3>
 {% comment %}
               <ul class="nav">
                 <li class="active"><a href="#">Home</a></li>
@@ -249,7 +249,9 @@ console.log(parts);
               </ul>
 {% endcomment %}
               <ul class="nav secondary-nav">
-                <li><a href="#">Log out</a></li>
+              {% if show_disconnect %}
+                <li><a href="{% url auth_logout %}">Disconnect</a></li>
+              {% endif %}
               </ul>
 {% comment %}
           <ul class="nav secondary-nav">
