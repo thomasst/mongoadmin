@@ -85,24 +85,10 @@ class CollectionView(ConnectionDetailMixin, TemplateView):
         return context
 
 
-class BaseDocumentView(ConnectionDetailMixin, FormView):
-    template_name = 'mongoadmin/document.html'
-    form_class = forms.DocumentForm
-
-    def form_valid(self, form):
-        obj = form.cleaned_data['json']
-        id = form.cleaned_data['id']
-        if id and '_id' not in obj:
-            obj['_id'] = ObjectId(id)
-        print obj
-        id = self.collection.save(obj)
-        messages.success(self.request, 'The document %s was saved successfully.' % id)
-        if '_continue' in self.request.POST:
-            return HttpResponseRedirect('../%s/' % id)
-        elif '_addanother' in self.request.POST:
-            return HttpResponseRedirect('../new/')
-        else:
-            return HttpResponseRedirect('../')
+class BaseDocumentView(ConnectionDetailMixin):
+    def get_document(self):
+        document = self.collection.find_one({'_id': ObjectId(self.kwargs['pk'])})
+        return document
 
     def get(self, request, *args, **kwargs):
         self.setup_connection()
@@ -124,20 +110,24 @@ class BaseDocumentView(ConnectionDetailMixin, FormView):
         })
         return context
 
-class CreateDocumentView(BaseDocumentView):
-    def get_document(self):
-        return None
 
-    def get_initial(self):
-        return {
-            'json': '{}',
-            'id': '',
-        }
+class UpdateDocumentView(BaseDocumentView, FormView):
+    form_class = forms.DocumentForm
+    template_name = 'mongoadmin/document.html'
 
-class UpdateDocumentView(BaseDocumentView):
-    def get_document(self):
-        document = self.collection.find_one({'_id': ObjectId(self.kwargs['pk'])})
-        return document
+    def form_valid(self, form):
+        obj = form.cleaned_data['json']
+        id = form.cleaned_data['id']
+        if id and '_id' not in obj:
+            obj['_id'] = ObjectId(id)
+        id = self.collection.save(obj)
+        messages.success(self.request, 'The document %s was saved successfully.' % id)
+        if '_continue' in self.request.POST:
+            return HttpResponseRedirect('../%s/' % id)
+        elif '_addanother' in self.request.POST:
+            return HttpResponseRedirect('../add/')
+        else:
+            return HttpResponseRedirect('../')
 
     def get_initial(self):
         # document = self.document.copy()
@@ -148,3 +138,24 @@ class UpdateDocumentView(BaseDocumentView):
             'json': json_data,
             'id': str(self.document['_id']),
         }
+
+
+class CreateDocumentView(UpdateDocumentView):
+    def get_document(self):
+        return None
+
+    def get_initial(self):
+        return {
+            'json': '{}',
+            'id': '',
+        }
+
+class DeleteDocumentView(BaseDocumentView, TemplateView):
+    template_name = 'mongoadmin/document_delete.html'
+
+    def post(self, request, *args, **kwargs):
+        self.setup_connection()
+        self.document = self.get_document()
+        self.collection.remove(ObjectId(self.kwargs['pk']))
+        messages.success(self.request, 'The document %s was removed successfully.' % self.kwargs['pk'])
+        return HttpResponseRedirect('../../')

@@ -34,13 +34,15 @@
     </div>
 
     <div class="well">
-        <a href="delete/" class="btn danger">Delete</a>
+        {% if document_id %}
         <div style="float:right;">
+            <a href="delete/" class="btn danger">Delete</a>
+        </div>
+        {% endif %}
             {# first button gets submitted when return is pressed #}
-            <input style="float:right; margin-left:6px;" name="_save" type="submit" class="btn primary" value="Save">
+            <input name="_save" type="submit" class="btn primary" value="Save">
             <button name="_addanother" class="btn">Save and add another</button>
             <button name="_continue" class="btn">Save and continue editing</button>
-        </div>
     </div>
 </form>
 
@@ -52,6 +54,9 @@ $(function() {
         $('textarea[name=json]').focus();
         $('textarea[name=json]').blur();
     });
+    {% if not document_id %}
+        $('#json_0_key').select();
+    {% endif %}
 });
 </script>
 {% endblock %}
