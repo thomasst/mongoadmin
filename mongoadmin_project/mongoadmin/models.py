@@ -19,4 +19,8 @@ class MongoConnection(models.Model):
         return self.name
 
     def get_connection(self):
-        return Connection(self.host, int(self.port), username=self.username, password=self.password)
+        #return Connection(self.host, int(self.port), username=self.username, password=self.password)
+        if self.username:
+            return Connection('mongodb://%s:%s@%s:%d' % (self.username, self.password, self.host, int(self.port)))
+        else:
+            return Connection('mongodb://%s:%d' % (self.host, int(self.port)))

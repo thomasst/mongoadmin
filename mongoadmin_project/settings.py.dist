@@ -1,6 +1,6 @@
 # Django settings for mongoadmin_project project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
@@ -132,6 +132,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.admin',
+    'mongoadmin_project.common',
     'mongoadmin_project.mongoadmin',
     # Uncomment the next line to enable admin documentation:
     # 'django.contrib.admindocs',
