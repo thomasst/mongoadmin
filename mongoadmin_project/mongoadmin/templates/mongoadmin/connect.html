@@ -1,0 +1,28 @@
+{% extends "mongoadmin/base.html" %}
+
+{% block breadcrumbs %}
+<ul class="breadcrumb">
+    {# <li><a href="../">MongoAdmin</a> <span class="divider">/</span></li> #}
+    <li>Connect</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<h2>Connect to MongoDB</h2>
+
+<form action="" method="post">{% csrf_token %}
+    <table>
+        {{ form }}
+        <tr>
+            <td></td>
+            <td>
+                <input type="submit" class="primary btn" value="Connect">
+            </td>
+        </tr>
+    </table>
+</form>
+
+<script type="text/javascript">
+    $('#id_host').focus();
+</script>
+{% endblock %}
