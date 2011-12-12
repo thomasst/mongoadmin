@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.core.paginator import Paginator
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.views.generic import DetailView, TemplateView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin, ProcessFormView, FormView
@@ -20,19 +20,13 @@ class ConnectionDetailMixin(object):
     model = models.MongoConnection
 
     def setup_connection(self):
-        self.connection = get_object_or_404(models.MongoConnection, name=self.kwargs['connection_name'])
+        if not self.request.user.is_authenticated():
+            raise Http404
+        self.connection = get_object_or_404(models.MongoConnection, name=self.kwargs['connection_name'], user=self.request.user)
         if 'database_name' in self.kwargs:
             self.database = self.connection.get_connection()[self.kwargs['database_name']]
             if 'collection_name' in self.kwargs:
                 self.collection = self.database[self.kwargs['collection_name']]
-
-    """
-    def get_context_data(self, **kwargs):
-        context = super(ConnectionDetailMixin, self).get_context_data(**kwargs)
-        self.connection = get_object_or_404(models.MongoConnection, name=self.kwargs['connection_name'])
-        context['connection'] = self.connection
-        return context
-    """
 
 class ConnectionView(ConnectionDetailMixin, TemplateView):
     template_name = 'mongoadmin/connection.html'
