@@ -32,14 +32,18 @@ class ConnectView(CreateView):
         connection.name = 'Connection'
 
         try:
-            test_result = connection.get_connection().database_names()
+            test_result = connection.get_connection().server_info()
         except pymongo.errors.AutoReconnect, e:
             messages.error(self.request, unicode(e))
             return self.form_invalid(form)
 
 
         self.request.session['mongoconnection'] = connection
-        return HttpResponseRedirect(self.success_url)
+        if connection.database:
+            # TODO: escape?
+            return HttpResponseRedirect('%s%s/' % (self.success_url, connection.database))
+        else:
+            return HttpResponseRedirect(self.success_url)
 
 
 class ConnectionDetailMixin(object):
