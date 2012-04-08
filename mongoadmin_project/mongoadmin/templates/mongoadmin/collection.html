@@ -25,7 +25,13 @@
             <a href="?" class="btn">Clear filter</a>
         {% endif %}
         <span class="help-block">E.g. {"field": "value"}</span>
-        <div id="json"></div>
+        <div id="json_query"></div>
+    </div>
+    {{ form.fields.label_tag }}
+    <div class="input">
+        {{ form.fields }}
+        <span class="help-block">E.g. ["field1", "field2"]</span>
+        <div id="json_fields"></div>
     </div>
 </div>
 </form>
@@ -34,15 +40,27 @@
     <thead>
         <tr>
             <th style="width:170px;">Document ID</th>
+{% if fields %}
+    {% for field in fields %}
+            <th>{{ field }}</th>
+    {% endfor %}
+{% else %}
             <th>Contents</th>
+{% endif %}
         </tr>
     </thead>
 
     <tbody>
-    {% for document_id, document in documents %}
+    {% for document_id, document, document_fields in documents %}
         <tr>
             <td>{% if document_id %}<a href="{{ document_id }}/">{{ document_id }}</a>{% endif %}</td>
+{% if fields %}
+    {% for field in document_fields %}
+            <td>{{ field }}</td>
+    {% endfor %}
+{% else %}
             <td>{{ document }}</td>
+{% endif %}
         </tr>
     {% endfor %}
     </tbody>
@@ -103,7 +121,8 @@
 
 <script type="text/javascript">
 $(function() {
-    $('#id_query').JSONEditor({indent:null});
+    $('#id_query').JSONEditor({idPrefix: 'json_query', indent:null});
+    $('#id_fields').JSONEditor({idPrefix: 'json_fields', indent:null});
 });
 </script>
 

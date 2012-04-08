@@ -15,6 +15,14 @@ class ConnectForm(forms.ModelForm):
 class CollectionFilterForm(forms.Form):
     page = forms.IntegerField(required=False)
     query = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'xxlarge', 'rows': '1'}))
+    fields = forms.CharField(required=False, widget=forms.Textarea(attrs={'class': 'xxlarge', 'rows': '1'}))
+
+    def clean_fields(self):
+        if self.cleaned_data['fields']:
+            try:
+                return json.loads(self.cleaned_data['fields'], object_hook=json_util.object_hook)
+            except Exception, e:
+                raise forms.ValidationError('Invalid JSON: %s' % unicode(e))
 
     def clean_query(self):
         if self.cleaned_data['query']:

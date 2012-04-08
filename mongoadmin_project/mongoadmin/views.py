@@ -125,19 +125,18 @@ class CollectionView(ConnectionDetailMixin, TemplateView):
         if form.is_valid():
             page_number = form.cleaned_data['page']
             query = form.cleaned_data['query']
+            fields = form.cleaned_data['fields']
         else:
             page_number = 1
             query = None
+            fields = None
         if not page_number:
             page_number = 1
 
 
         self.setup_connection()
 
-        if query:
-            all_documents = self.collection.find(query)
-        else:
-            all_documents = self.collection.find()
+        all_documents = self.collection.find(query, fields=fields)
 
         paginator = Paginator(all_documents, self.per_page)
         page_obj = paginator.page(page_number)
@@ -153,12 +152,23 @@ class CollectionView(ConnectionDetailMixin, TemplateView):
             getvars = '&%s' % getvars
 
 
-        def prepare_document(document):
-            if '_id' in document:
-                del document['_id']
-            return ellipsize(json.dumps(document, default=json_util.default), 120)
+        def get_field(data, field):
+            for part in field.split('.'):
+                if data:
+                    data = data.get(part)
+                else:
+                    break
+            return data
 
-        documents_list = [(document.get('_id'), prepare_document(document)) for document in documents]
+        def prepare_document(document):
+            document_id = document.pop('_id')
+            if fields:
+                document_fields = [json.dumps(get_field(document, field), default=json_util.default) for field in fields]
+            else:
+                document_fields = []
+            return document_id, ellipsize(json.dumps(document, default=json_util.default), 120), document_fields
+
+        documents_list = [prepare_document(document) for document in documents]
 
         context.update({
             'connection': self.connection,
@@ -172,6 +182,7 @@ class CollectionView(ConnectionDetailMixin, TemplateView):
             'getvars': getvars,
             'form': form,
             'query': query,
+            'fields': fields,
         })
         return context
 
