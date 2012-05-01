@@ -4,7 +4,7 @@ import os
 BASE_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), ''))
 LIB_PATH = os.path.abspath(os.path.join(BASE_PATH, '..'))
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 ADMINS = (
