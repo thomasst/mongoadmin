@@ -14,6 +14,10 @@ Create a database for Django (by default, it is a MySQL database called `mongoad
 
 Fill in `SECRET_KEY` (can be any random string) in the settings.py file that you created.
 
+Create SQL database tables:
+
+    python manage.py syncdb
+
 Run the server:
 
     python manage.py runserver
