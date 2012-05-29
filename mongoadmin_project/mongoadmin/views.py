@@ -7,8 +7,8 @@ from django.views.generic.edit import FormMixin, ProcessFormView, FormView
 from django.shortcuts import get_object_or_404
 
 import pymongo
-from pymongo.objectid import ObjectId
-from pymongo import json_util
+from bson.objectid import ObjectId
+from bson import json_util
 
 import cgi
 import json

@@ -1,6 +1,6 @@
 from django import forms
 import json
-from pymongo import json_util
+from bson import json_util
 
 from . import models
 
