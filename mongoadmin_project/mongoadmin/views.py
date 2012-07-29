@@ -189,7 +189,11 @@ class CollectionView(ConnectionDetailMixin, TemplateView):
 
 class BaseDocumentView(ConnectionDetailMixin):
     def get_document(self):
-        document = self.collection.find_one({'_id': ObjectId(self.kwargs['pk'])})
+        try:
+            pk = ObjectId(self.kwargs['pk'])
+        except:
+            pk = self.kwargs['pk']
+        document = self.collection.find_one({'_id': pk})
         return document
 
     def get(self, request, *args, **kwargs):
