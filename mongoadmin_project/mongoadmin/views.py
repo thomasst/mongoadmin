@@ -188,8 +188,19 @@ class CollectionView(ConnectionDetailMixin, TemplateView):
 
 
 class BaseDocumentView(ConnectionDetailMixin):
+    def infer_id(self, pk):
+        if len(pk)==24:
+            try:
+                return ObjectId(pk)
+            except pymongo.errors.InvalidId:
+                pass
+        try:
+            return int(pk)
+        except ValueError:
+            return pk
+
     def get_document(self):
-        document = self.collection.find_one({'_id': ObjectId(self.kwargs['pk'])})
+        document = self.collection.find_one({'_id': self.infer_id(self.kwargs['pk'])})
         return document
 
     def get(self, request, *args, **kwargs):
@@ -222,7 +233,7 @@ class UpdateDocumentView(BaseDocumentView, FormView):
         id = form.cleaned_data['id']
         if id and '_id' not in obj:
             # Reinsert id into document when editing an existing document.
-            obj['_id'] = ObjectId(id)
+            obj['_id'] = self.infer_id(id)
         id = self.collection.save(obj)
         messages.success(self.request, 'The document %s was saved successfully.' % id)
         if '_continue' in self.request.POST:
@@ -259,6 +270,6 @@ class DeleteDocumentView(BaseDocumentView, TemplateView):
     def post(self, request, *args, **kwargs):
         self.setup_connection()
         self.document = self.get_document()
-        self.collection.remove(ObjectId(self.kwargs['pk']))
+        self.collection.remove(self.infer_id(self.kwargs['pk']))
         messages.success(self.request, 'The document %s was removed successfully.' % self.kwargs['pk'])
         return HttpResponseRedirect('../../')
