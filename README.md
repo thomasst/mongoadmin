@@ -3,7 +3,7 @@ Getting started
 
 Make sure you have the following packages installed:
 
-* Django 1.4
+* Django 1.4 or 1.5
 * mongo-python-driver
 
 Make a copy the included default project settings:
