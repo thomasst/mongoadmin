@@ -37,17 +37,12 @@
           <div class="topbar-inner">
             <div class="container">
               <h3><a href="/">MongoAdmin</a></h3>
-{% comment %}
               <ul class="nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#">Link</a></li>
-                <li><a href="#">Link</a></li>
-                <li><a href="#">Link</a></li>
+                <li><a href="/mongo/connect/">Connect Service</a></li>
               </ul>
-{% endcomment %}
               <ul class="nav secondary-nav">
               {% if show_disconnect %}
-                <li><a href="">Disconnect</a></li>
+                <li><a href="/accounts/logout/">Disconnect</a></li>
               {% endif %}
               </ul>
 {% comment %}

@@ -6,7 +6,7 @@ from django.core.paginator import Paginator
 from django.forms import model_to_dict
 from django.http import HttpResponseRedirect, Http404
 from django.utils.decorators import method_decorator
-from django.views.generic import DetailView, TemplateView, CreateView
+from django.views.generic import DetailView, TemplateView, CreateView, ListView
 from django.views.generic.detail import SingleObjectMixin
 from django.views.generic.edit import FormMixin, ProcessFormView, FormView
 from django.shortcuts import get_object_or_404
@@ -22,6 +22,19 @@ import urllib
 from mongoadmin_project.mongoadmin.models import MongoConnection
 from ..common.utils import ellipsize
 from . import models, forms
+
+
+@login_required
+def redirect_to(request, id):
+    connection = MongoConnection.objects.get(id=id)
+    request.session['mongoconnection'] = model_to_dict(connection)
+    return HttpResponseRedirect('/mongo/session/') # TODO: Надо на реверсеры все
+
+
+@method_decorator([login_required], name='dispatch')
+class СonnectsList(ListView):
+    model = MongoConnection
+    context_object_name = 'connects'
 
 
 @method_decorator([login_required], name='dispatch')
