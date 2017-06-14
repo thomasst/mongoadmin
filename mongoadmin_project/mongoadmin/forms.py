@@ -9,7 +9,7 @@ class ConnectForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, required=False)
     class Meta:
         model = models.MongoConnection
-        fields = ['name', 'host', 'port', 'username', 'password', 'database']
+        fields = ['name', 'host', 'port','auth_database', 'username', 'password', 'database']
 
 
 class CollectionFilterForm(forms.Form):
