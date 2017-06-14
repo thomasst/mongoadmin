@@ -1,9 +1,8 @@
-from django.conf.urls.defaults import *
+from django.conf.urls import url
 from django.views.generic import RedirectView, TemplateView
-
 from . import views
 
-urlpatterns = patterns('mongoadmin',
+urlpatterns = (
     url(r'^$', RedirectView.as_view(url='/mongo/connect/')),
     url(r'^mongo/connect/$', views.ConnectView.as_view()),
     url(r'^mongo/(?P<connection_name>[^/]+)/$', views.ConnectionView.as_view()),

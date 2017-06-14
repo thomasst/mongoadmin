@@ -1,13 +1,12 @@
 {% load compress %}
-<!doctype html>
 <html>
 <head>
-<link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
-{% compress js %}
-<script src="{{ STATIC_URL }}js/jquery.min.js"></script>
-<script src="{{ STATIC_URL }}js/json2.js"></script>
-<script src="{{ STATIC_URL }}js/jsoneditor.js"></script>
-{% endcompress %}
+<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/json2.js"></script>
+<script src="/static/js/jsoneditor.js"></script>
+
 <style type="text/css">
     .input-prepend { margin:2px 0; }
     .input-prepend .add-on { width:80px; }
@@ -48,7 +47,7 @@
 {% endcomment %}
               <ul class="nav secondary-nav">
               {% if show_disconnect %}
-                <li><a href="{% url auth_logout %}">Disconnect</a></li>
+                <li><a href="">Disconnect</a></li>
               {% endif %}
               </ul>
 {% comment %}
