@@ -14,7 +14,7 @@ ADMINS = (
 MANAGERS = ADMINS
 
 TIME_ZONE = 'America/Chicago'
-
+ALLOWED_HOSTS = ["46.254.18.105"]
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
