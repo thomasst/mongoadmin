@@ -126,7 +126,6 @@ class DatabaseView(ConnectionDetailMixin, TemplateView):
         try:
 
             collections = self.database.collection_names()
-            print(collections)
         except pymongo.errors.AutoReconnect as e:
             messages.error(self.request, e)
             collections = []
