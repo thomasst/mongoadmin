@@ -1,3 +1,4 @@
+#encoding: utf-8
 from urllib.parse import urlencode
 
 from django.contrib import messages
