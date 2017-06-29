@@ -10,3 +10,4 @@ secret.py
 .DS_Store
 #settings.py
 settings_local.py
+cfg/*

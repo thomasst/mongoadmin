@@ -167,7 +167,6 @@ class CollectionView(ConnectionDetailMixin, TemplateView):
 
         documents = page_obj.object_list
 
-
         params = dict(cgi.parse_qsl(self.request.META.get('QUERY_STRING')))
         if 'page' in params:
             del params['page']
@@ -175,7 +174,6 @@ class CollectionView(ConnectionDetailMixin, TemplateView):
         getvars = urlencode(params)
         if getvars:
             getvars = '&%s' % getvars
-
 
         def get_field(data, field):
             for part in field.split('.'):
