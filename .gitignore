@@ -11,3 +11,5 @@ secret.py
 #settings.py
 settings_local.py
 cfg/*
+.idea
+*yuicompressor-2.4.7*
