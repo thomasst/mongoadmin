@@ -3,15 +3,15 @@
 {% block breadcrumbs %}
 <ul class="breadcrumb">
     {# <li><a href="../">MongoAdmin</a> <span class="divider">/</span></li> #}
-    <li>{{ connection.name }}</a></li>
+    <li>List of services</a></li>
 </ul>
 {% endblock %}
 
 {% block content %}
 {# <p><a href="add/" class="btn" style="float:right;">&#10010; Add database</a></p> #}
 
-{# <h2>Connection "{{ connection.name }}"</h2> #}
-<h2>{{ connection.name }}</h2>
+{# <h2>Connection "{{ connection }}"</h2> #}
+<h2>{{ connection }}</h2>
 
 <table>
     <thead>
@@ -21,11 +21,16 @@
     </thead>
 
     <tbody>
-    {% for database in databases %}
+    {% for connect in connects %}
         <tr>
-            <td><a href="{{ database }}/">{{ database }}</a></td>
+            <td><a href="/mongo/connect/{{ connect.id }}/">{{ connect.name }}</a></td>
         </tr>
     {% endfor %}
     </tbody>
 </table>
 {% endblock %}
+
+<body>
+
+</body>
+</html>

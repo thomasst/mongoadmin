@@ -1,13 +1,12 @@
 {% load compress %}
-<!doctype html>
 <html>
 <head>
-<link rel="stylesheet" href="{{ STATIC_URL }}css/bootstrap.min.css">
-{% compress js %}
-<script src="{{ STATIC_URL }}js/jquery.min.js"></script>
-<script src="{{ STATIC_URL }}js/json2.js"></script>
-<script src="{{ STATIC_URL }}js/jsoneditor.js"></script>
-{% endcompress %}
+<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+
+<script src="/static/js/jquery.min.js"></script>
+<script src="/static/js/json2.js"></script>
+<script src="/static/js/jsoneditor.js"></script>
+
 <style type="text/css">
     .input-prepend { margin:2px 0; }
     .input-prepend .add-on { width:80px; }
@@ -38,17 +37,12 @@
           <div class="topbar-inner">
             <div class="container">
               <h3><a href="/">MongoAdmin</a></h3>
-{% comment %}
               <ul class="nav">
-                <li class="active"><a href="#">Home</a></li>
-                <li><a href="#">Link</a></li>
-                <li><a href="#">Link</a></li>
-                <li><a href="#">Link</a></li>
+                <li><a href="/mongo/connect/">Connect Service</a></li>
               </ul>
-{% endcomment %}
               <ul class="nav secondary-nav">
               {% if show_disconnect %}
-                <li><a href="{% url auth_logout %}">Disconnect</a></li>
+                <li><a href="/accounts/logout/">Disconnect</a></li>
               {% endif %}
               </ul>
 {% comment %}

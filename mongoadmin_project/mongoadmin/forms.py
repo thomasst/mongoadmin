@@ -9,7 +9,7 @@ class ConnectForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput, required=False)
     class Meta:
         model = models.MongoConnection
-        fields = ['host', 'port', 'username', 'password', 'database']
+        fields = ['name', 'host', 'port','auth_database', 'username', 'password', 'database']
 
 
 class CollectionFilterForm(forms.Form):
@@ -21,15 +21,15 @@ class CollectionFilterForm(forms.Form):
         if self.cleaned_data['fields']:
             try:
                 return json.loads(self.cleaned_data['fields'], object_hook=json_util.object_hook)
-            except Exception, e:
-                raise forms.ValidationError('Invalid JSON: %s' % unicode(e))
+            except Exception as e:
+                raise forms.ValidationError('Invalid JSON: %s' % e)
 
     def clean_query(self):
         if self.cleaned_data['query']:
             try:
                 return json.loads(self.cleaned_data['query'], object_hook=json_util.object_hook)
-            except Exception, e:
-                raise forms.ValidationError('Invalid JSON: %s' % unicode(e))
+            except Exception as e:
+                raise forms.ValidationError('Invalid JSON: %s' % e)
 
 
 class DocumentForm(forms.Form):
@@ -39,5 +39,5 @@ class DocumentForm(forms.Form):
     def clean_json(self):
         try:
             return json.loads(self.cleaned_data['json'], object_hook=json_util.object_hook)
-        except Exception, e:
-            raise forms.ValidationError('Invalid JSON: %s' % unicode(e))
+        except Exception as e:
+            raise forms.ValidationError('Invalid JSON: %s' % e)
